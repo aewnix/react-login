@@ -1,17 +1,61 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React, { useReducer } from "react";
+import ReactDOM from "react-dom";
+import { Switch, Route, BrowserRouter } from "react-router-dom";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+import Login from "./pages/login.js";
+import Email from "./pages/email.js";
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+import "./index.css";
+import CssBaseline from "@mui/material/CssBaseline";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
+
+import {Context, initialState, reducer} from "./store";
+
+function App() {
+    const [store, dispatch] = useReducer(reducer, initialState);
+
+    const MuiTheme = createTheme({
+                palette: {
+                    background: {
+                        default: "#DBE0F9"
+                    },
+                    text: {
+                        primary: "#6065D9"
+                    }
+                },
+                components: {
+                    MuiContainer: {
+                        variants: [
+                            {
+                                props: { variant: "customContainer" },
+                                style: {
+                                    height: 'auto',
+                                    zIndex: "100",
+                                    backgroundColor: "white",
+                                    padding: "40px",
+                                    borderRadius: "20px",
+                                    boxShadow: "10px 10px 15px 10px rgba(73, 78, 176, 0.5)",
+                                },
+                            }
+                        ],
+                    },
+                }
+    });
+
+    return (
+        <Context.Provider value={{ store, dispatch }}>
+            <ThemeProvider theme={ MuiTheme }>
+                <CssBaseline/>
+                <BrowserRouter>
+                    <Switch>
+                        <Route exact path="/" component={ Login }/>
+                        <Route path="/email" component={ Email }/>
+                    </Switch>
+                </BrowserRouter>
+            </ThemeProvider>
+        </Context.Provider>
+    );
+}
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App/>, rootElement);
